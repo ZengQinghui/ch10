@@ -30,7 +30,7 @@ public class CustomerDao {
 				//注册驱动，获取连接
 				conn= ConnectionFactory.getConn();
 				
-				String sql = "insert into rj_customer"
+				String sql = "insert into customer"
 						+ "(name,password,age,telephone)"
 						+ " values(?,?,?,?)";
 				//创建pstmt,如果有占位符，替换占位符
