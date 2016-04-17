@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.briup.estore.bean.Customer;
 import com.briup.estore.service.ICustomerService;
 import com.briup.estore.service.impl.CustomerServiceImpl;
-//http://localhost:8888/ch10/register.jsp
+//http://localhost:8080/ch10/register.jsp
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
