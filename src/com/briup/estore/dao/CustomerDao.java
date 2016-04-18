@@ -3,6 +3,8 @@ package com.briup.estore.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.briup.estore.bean.Customer;
 import com.briup.estore.common.jdbc.ConnectionFactory;
@@ -54,44 +56,57 @@ public class CustomerDao {
 	 * @return com.briup.estore.bean.Customer
 	 * @roseuid 56F9D8420323
 	 */
-	public Customer findById(long id) {
-		try {
+	public List<Customer> findById(long id) {
+		List<Customer> list=new ArrayList<Customer>();
+		try {	
 			Connection conn = null;
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			try {
 				conn = ConnectionFactory.getConn();
-				String sql = "select * from customer where id=" + id;
+				String sql = "select * from customer where id=?";
 				pstmt = conn.prepareStatement(sql);
+				pstmt.setLong(1, id);
 				rs = pstmt.executeQuery();
-				Customer cs = null;
 				while (rs.next()) {
-					cs = new Customer();
-					cs.setId(rs.getLong(1));
-					cs.setName(rs.getString(2));
-					cs.setPassword(rs.getString(3));
-					cs.setAge(rs.getInt(4));
-					cs.setTelephone(rs.getString(5));
+					String name=rs.getString("name");
+					String password=rs.getString("password");
+					Integer age=rs.getInt("age");
+					String telephone=rs.getString("telephone");
+					Customer customer=new Customer(id,name,password,age,telephone);
+					list.add(customer);
 				}
-
-				return cs;
-
 			} finally {
-				ConnectionFactory.close(null, pstmt, conn);
+				ConnectionFactory.close(rs, pstmt, conn);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return list;
 	}
 
 	/**
 	 * @param customer
 	 * @roseuid 56F9D8810163
 	 */
-	public void update(Customer customer) {
-		
-	}
+	public void update(String name,long id) {
+		try {
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			try {
+				conn = ConnectionFactory.getConn();
+				String sql = "update customer set name=? where id=?";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, name);
+				pstmt.setLong(2, id);
+				pstmt.executeUpdate();
+			} finally {
+				ConnectionFactory.close(null, pstmt, conn);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+}
 
 	/**
 	 * @param id
@@ -103,8 +118,9 @@ public class CustomerDao {
 			PreparedStatement pstmt = null;
 			try {
 				conn = ConnectionFactory.getConn();
-				String sql = "delete from customer where id=" + id;
+				String sql = "delete from customer where id=?";
 				pstmt = conn.prepareStatement(sql);
+				pstmt.setLong(1, id);
 				pstmt.executeUpdate();
 			} finally {
 				ConnectionFactory.close(null, pstmt, conn);
